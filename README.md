@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>لعبة المعالم السياحية في مصر</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000000; 
+      text-align: center;
+      padding: 20px;
+    }
+
+    img {
+      width: 400px;
+      margin: 20px auto;
+      border: 3px solid #fabb0f; 
+      border-radius: 10px;
+      display: block;
+    }
+
+    #choices {
+      display: flex; 
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    button {
+      margin: 10px 5px;
+      padding: 10px 20px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #fabb0f; 
+      color: rgb(5, 0, 0); 
+      border: none;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #e0a800; 
+    }
+
+    #result {
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #fabb0f; /* لون نص النتيجة أصفر ذهبي */
+    }
+
+    h2 {
+      color: #fabb0f; 
+    }
+
+    
+    #thank-you-screen {
+      display: none; 
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #000000; 
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); 
+      color: #fabb0f;
+    }
+
+    #thank-you-screen img {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 50%; 
+      border: 3px solid #fabb0f; 
+      margin-bottom: 15px;
+    }
+
+    #thank-you-screen p {
+      font-size: 20px;
+      color: #fabb0f; 
+      line-height: 1.6;
+    }
+
+    #thank-you-screen .developers-names {
+      font-size: 26px; 
+      font-weight: bold;
+      color: #fabb0f; 
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2 id="question-title">ما اسم هذا المعلم؟</h2>
+
+  <img id="landmark-img" src="" alt="صورة لمعلم سياحي مصري">
+
+  <div id="choices"></div>
+
+  <p id="result"></p>
+
+  <audio id="correct-sound" src="success-1-6297.mp3"></audio>
+  <audio id="wrong-sound" src="wrong-answer-126515.mp3"></audio>
+
+  ---
+  <div id="thank-you-screen">
+    <img id="developers-photo" src="photo_5940325222664228084_y.jpg" alt="صورة فريق العمل">
+    <p>شكرًا لك على لعب هذه اللعبة</p>
+
+    <div class="developers-names">
+      
+      <p> عمل الطالبه : ملك خلاد ابو الخير </p>
+      <p> عمل الطالب : عمر خلاد ابو الخير </p>
+      </div>
+  </div>
+  ---
+
+  <script>
+    const questions = [
+      {
+        img: "par.jfif",
+        correct: "أهرامات الجيزة",
+        choices: ["أهرامات الجيزة", "معبد الكرنك", "برج القاهرة"]
+      },
+      {
+        img: "photo_5940325222664227959_x.jpg",
+        correct: "معبد أبو سمبل",
+        choices: ["معبد فيلة", "معبد أبو سمبل", "معبد الأقصر"]
+      },
+      {
+        img: "photo_5940325222664228045_x.jpg",
+        correct: "برج القاهرة",
+        choices: ["برج القاهرة", "المتحف المصري", "قلعة صلاح الدين"]
+      },
+      {
+        img: "Luxor, Egypt.jfif",
+        correct: "معبد الكرنك",
+        choices: ["معبد الكرنك", "المتحف القبطي", "برج القاهرة"]
+      },
+      {
+        img: "Egypt - Caïro - Museum.jfif",
+        correct: "المتحف المصري",
+        choices: ["المتحف المصري", "المتحف الإسلامي", "معبد حتشبسوت"]
+      },
+      {
+        img: "sant.jfif",
+        correct: "دير سانت كاترين",
+        choices: ["أهرامات الجيزة", "معبد الكرنك", "دير سانت كاترين"]
+      },
+      {
+        img: "hitan.jfif",
+        correct: "وادي الحيتان",
+        choices: ["وادي الحيتان", "معبد الكرنك", "برج القاهرة"]
+      },
+      {
+        img: "Salah El Din Citadel.jfif",
+        correct: "قلعة صلاح الدين الايوبي",
+        choices: ["أهرامات الجيزة", "قلعة صلاح الدين الايوبي", "برج القاهرة"]
+      },
+      {
+        img: "alex.jfif",
+        correct: "مكتبة الاسكندريه",
+        choices: ["أهرامات الجيزة", "معبد الكرنك", "مكتبة الاسكندريه"]
+      },
+    ];
+
+    let current = 0;
+
+    const correctSound = document.getElementById('correct-sound');
+    const wrongSound = document.getElementById('wrong-sound');
+
+    function loadQuestion() {
+      
+      if (current >= questions.length) {
+        
+        document.getElementById("question-title").style.display = "none";
+        document.getElementById("landmark-img").style.display = "none";
+        document.getElementById("choices").style.display = "none";
+        document.getElementById("result").style.display = "none";
+        document.getElementById("thank-you-screen").style.display = "block";
+        return;
+      }
+
+      const q = questions[current];
+      document.getElementById("landmark-img").src = q.img;
+      document.getElementById("result").textContent = "";
+
+      const choicesDiv = document.getElementById("choices");
+      choicesDiv.innerHTML = "";
+
+      q.choices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.textContent = choice;
+        btn.onclick = () => checkAnswer(choice === q.correct);
+        choicesDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(isCorrect) {
+      const result = document.getElementById("result");
+      if (isCorrect) {
+        result.textContent = "إجابة صحيحة ✅";
+        result.style.color = "tan";
+        correctSound.play();
+      } else {
+        result.textContent = "إجابة خاطئة ❌";
+        result.style.color = "red";
+        wrongSound.play();
+      }
+
+      setTimeout(() => {
+        current++;
+        loadQuestion();
+      }, 2000);
+    }
+
+    loadQuestion();
+  </script>
+
+</body>
+</html>
